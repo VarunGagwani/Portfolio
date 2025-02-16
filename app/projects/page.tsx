@@ -24,12 +24,12 @@ const projects = [
     demo: "https://github.com/VarunGagwani/Study-Engine#demo"
   },
   {
-    title: "Customer Churn Dashboard",
-    description: "Interactive dashboard predicting customer churn with 89% accuracy using machine learning and advanced analytics.",
+    title: "Portfolio Website",
+    description: "Modern, responsive portfolio website built with Next.js and Tailwind CSS. Features smooth animations, dark mode, and a clean, professional design.",
     image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=800",
-    tags: ["Data Science", "Python", "Tableau", "ML"],
-    github: "https://github.com/VarunGagwani",
-    demo: "#"
+    tags: ["Next.js", "TypeScript", "Tailwind CSS", "Framer Motion"],
+    github: "https://github.com/VarunGagwani/Portfolio",
+    demo: "https://varungagwani.com"
   }
 ]
 
