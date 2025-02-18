@@ -8,7 +8,7 @@ import { Github, ExternalLink } from "lucide-react"
 
 const projects = [
   {
-    title: "Emotion Classifier",
+    title: "Human Emotion Classifier",
     description: "Real-time emotion detection system using deep learning and computer vision. Processes live video feed to identify and classify human emotions with high accuracy.",
     image: "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?auto=format&fit=crop&q=80&w=800",
     tags: ["Python", "TensorFlow", "OpenCV", "Deep Learning"],

@@ -9,10 +9,72 @@ import Projects from "./projects/page"
 import Experience from "./experience/page"
 import Contact from "./contact/page"
 import Image from "next/image"
+import { useEffect, useRef } from "react"
 
 export default function Home() {
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container) return
+
+    let isScrolling = false
+    let startY = 0
+    const sections = container.getElementsByTagName('section')
+    let currentSectionIndex = 0
+
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault()
+      if (isScrolling) return
+
+      const direction = e.deltaY > 0 ? 1 : -1
+      const nextIndex = currentSectionIndex + direction
+
+      if (nextIndex >= 0 && nextIndex < sections.length) {
+        isScrolling = true
+        currentSectionIndex = nextIndex
+        sections[currentSectionIndex].scrollIntoView({ behavior: 'smooth' })
+        setTimeout(() => {
+          isScrolling = false
+        }, 1000)
+      }
+    }
+
+    const handleTouchStart = (e: TouchEvent) => {
+      startY = e.touches[0].clientY
+    }
+
+    const handleTouchMove = (e: TouchEvent) => {
+      e.preventDefault()
+      if (isScrolling) return
+
+      const currentY = e.touches[0].clientY
+      const direction = startY > currentY ? 1 : -1
+      const nextIndex = currentSectionIndex + direction
+
+      if (Math.abs(startY - currentY) > 50 && nextIndex >= 0 && nextIndex < sections.length) {
+        isScrolling = true
+        currentSectionIndex = nextIndex
+        sections[currentSectionIndex].scrollIntoView({ behavior: 'smooth' })
+        setTimeout(() => {
+          isScrolling = false
+        }, 1000)
+      }
+    }
+
+    container.addEventListener('wheel', handleWheel, { passive: false })
+    container.addEventListener('touchstart', handleTouchStart, { passive: false })
+    container.addEventListener('touchmove', handleTouchMove, { passive: false })
+
+    return () => {
+      container.removeEventListener('wheel', handleWheel)
+      container.removeEventListener('touchstart', handleTouchStart)
+      container.removeEventListener('touchmove', handleTouchMove)
+    }
+  }, [])
+
   return (
-    <div className="snap-y snap-mandatory h-screen overflow-y-scroll">
+    <div ref={containerRef} className="snap-y snap-mandatory h-screen overflow-y-scroll">
       <section id="home" className="snap-start h-screen flex items-center justify-center bg-[url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=2072')] bg-cover bg-center bg-no-repeat">
         <div className="w-full h-full bg-background/80 backdrop-blur-sm flex items-center justify-center">
           <AnimatePresence mode="wait">

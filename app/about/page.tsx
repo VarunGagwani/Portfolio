@@ -113,7 +113,7 @@ export default function About() {
           className="text-4xl font-bold mb-8"
           variants={itemVariants}
         >
-          About Me
+          About Varun Gagwani
         </motion.h1>
         <motion.div 
           className="prose dark:prose-invert max-w-none mb-12"
@@ -121,7 +121,7 @@ export default function About() {
         >
           <p className="text-lg text-muted-foreground">
             A passionate technologist with expertise in cybersecurity, data science, and full-stack development. 
-            I specialize in building secure, data-driven solutions that solve complex business problems.
+            He specializes in building secure, data-driven solutions that solve complex business problems.
           </p>
         </motion.div>
 
