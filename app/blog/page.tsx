@@ -11,7 +11,7 @@ const blogs = [
     id: 1,
     slug: "ai-hackathon",
     title: "48 Hours of Innovation: How AI Transformed a Hackathon and Is Shaping the Future",
-    date: "March 21, 2024",
+    date: "February 20, 2025",
     excerpt: "An eye-opening experience at HackHive hackathon, exploring how AI acted as a catalyst for rapid development and its implications for the tech industry.",
     tags: ["AI", "Hackathon", "Innovation", "Technology"],
     readTime: "15 min read"
