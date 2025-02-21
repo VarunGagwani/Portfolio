@@ -2,41 +2,65 @@
 
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
-import { ArrowRight, Download } from "lucide-react"
+import { ArrowRight, BookText } from "lucide-react"
 import Link from "next/link"
 import About from "./about/page"
+import Blog from "./blog/page"
 import Projects from "./projects/page"
 import Experience from "./experience/page"
 import Contact from "./contact/page"
 import Image from "next/image"
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 
 export default function Home() {
   const containerRef = useRef<HTMLDivElement>(null)
+  const [isScrolling, setIsScrolling] = useState(false)
+  const [currentSectionIndex, setCurrentSectionIndex] = useState(0)
 
   useEffect(() => {
     const container = containerRef.current
     if (!container) return
 
-    let isScrolling = false
     let startY = 0
+    let lastScrollTime = 0
+    const scrollCooldown = 1000 // 1 second cooldown between section changes
     const sections = container.getElementsByTagName('section')
-    let currentSectionIndex = 0
+    const totalSections = sections.length
+
+    const isAtSectionBottom = (section: Element) => {
+      const sectionRect = section.getBoundingClientRect()
+      const viewportHeight = window.innerHeight
+      return sectionRect.bottom <= viewportHeight + 5 // Small buffer for rounding errors
+    }
+
+    const isAtSectionTop = (section: Element) => {
+      const sectionRect = section.getBoundingClientRect()
+      return sectionRect.top >= -5 // Small buffer for rounding errors
+    }
 
     const handleWheel = (e: WheelEvent) => {
-      e.preventDefault()
-      if (isScrolling) return
+      const now = Date.now()
+      if (now - lastScrollTime < scrollCooldown) return
 
+      const currentSection = sections[currentSectionIndex]
       const direction = e.deltaY > 0 ? 1 : -1
       const nextIndex = currentSectionIndex + direction
 
-      if (nextIndex >= 0 && nextIndex < sections.length) {
-        isScrolling = true
-        currentSectionIndex = nextIndex
-        sections[currentSectionIndex].scrollIntoView({ behavior: 'smooth' })
-        setTimeout(() => {
-          isScrolling = false
-        }, 1000)
+      // Only prevent default if we're going to change sections
+      if (nextIndex >= 0 && nextIndex < totalSections) {
+        if (
+          (direction > 0 && isAtSectionBottom(currentSection)) ||
+          (direction < 0 && isAtSectionTop(currentSection))
+        ) {
+          e.preventDefault()
+          setIsScrolling(true)
+          setCurrentSectionIndex(nextIndex)
+          sections[nextIndex].scrollIntoView({ behavior: 'smooth' })
+          lastScrollTime = now
+          setTimeout(() => {
+            setIsScrolling(false)
+          }, scrollCooldown)
+        }
       }
     }
 
@@ -45,25 +69,37 @@ export default function Home() {
     }
 
     const handleTouchMove = (e: TouchEvent) => {
-      e.preventDefault()
-      if (isScrolling) return
+      const now = Date.now()
+      if (now - lastScrollTime < scrollCooldown) {
+        e.preventDefault()
+        return
+      }
 
       const currentY = e.touches[0].clientY
-      const direction = startY > currentY ? 1 : -1
+      const deltaY = startY - currentY
+      const direction = deltaY > 0 ? 1 : -1
       const nextIndex = currentSectionIndex + direction
+      const currentSection = sections[currentSectionIndex]
 
-      if (Math.abs(startY - currentY) > 50 && nextIndex >= 0 && nextIndex < sections.length) {
-        isScrolling = true
-        currentSectionIndex = nextIndex
-        sections[currentSectionIndex].scrollIntoView({ behavior: 'smooth' })
-        setTimeout(() => {
-          isScrolling = false
-        }, 1000)
+      if (Math.abs(deltaY) > 50 && nextIndex >= 0 && nextIndex < totalSections) {
+        if (
+          (direction > 0 && isAtSectionBottom(currentSection)) ||
+          (direction < 0 && isAtSectionTop(currentSection))
+        ) {
+          e.preventDefault()
+          setIsScrolling(true)
+          setCurrentSectionIndex(nextIndex)
+          sections[nextIndex].scrollIntoView({ behavior: 'smooth' })
+          lastScrollTime = now
+          setTimeout(() => {
+            setIsScrolling(false)
+          }, scrollCooldown)
+        }
       }
     }
 
     container.addEventListener('wheel', handleWheel, { passive: false })
-    container.addEventListener('touchstart', handleTouchStart, { passive: false })
+    container.addEventListener('touchstart', handleTouchStart, { passive: true })
     container.addEventListener('touchmove', handleTouchMove, { passive: false })
 
     return () => {
@@ -71,7 +107,7 @@ export default function Home() {
       container.removeEventListener('touchstart', handleTouchStart)
       container.removeEventListener('touchmove', handleTouchMove)
     }
-  }, [])
+  }, [isScrolling, currentSectionIndex])
 
   return (
     <div ref={containerRef} className="snap-y snap-mandatory h-screen overflow-y-scroll">
@@ -128,9 +164,9 @@ export default function Home() {
                   </a>
                 </Button>
                 <Button variant="outline" asChild className="w-full md:w-auto">
-                  <a href="/resume.pdf" download>
-                    Download Resume
-                    <Download className="ml-2 h-4 w-4" />
+                  <a href="#blog">
+                    Read Blog
+                    <BookText className="ml-2 h-4 w-4" />
                   </a>
                 </Button>
               </motion.div>
@@ -139,26 +175,32 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="about" className="snap-start min-h-screen bg-[url('https://images.unsplash.com/photo-1517134191118-9d595e4c8c2b?auto=format&fit=crop&q=80&w=2070')] bg-cover bg-center bg-no-repeat">
-        <div className="w-full h-full bg-background/90 backdrop-blur-sm">
+      <section id="about" className="snap-start min-h-screen overflow-y-auto bg-[url('https://images.unsplash.com/photo-1517134191118-9d595e4c8c2b?auto=format&fit=crop&q=80&w=2070')] bg-cover bg-center bg-no-repeat">
+        <div className="w-full min-h-screen bg-background/90 backdrop-blur-sm">
           <About />
         </div>
       </section>
 
-      <section id="projects" className="snap-start min-h-screen bg-[url('https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&q=80&w=2070')] bg-cover bg-center bg-no-repeat">
-        <div className="w-full h-full bg-background/90 backdrop-blur-sm">
+      <section id="blog" className="snap-start min-h-screen overflow-y-auto bg-[url('https://images.unsplash.com/photo-1456324504439-367cee3b3c32?auto=format&fit=crop&q=80&w=2070')] bg-cover bg-center bg-no-repeat">
+        <div className="w-full min-h-screen bg-background/90 backdrop-blur-sm">
+          <Blog />
+        </div>
+      </section>
+
+      <section id="projects" className="snap-start min-h-screen overflow-y-auto bg-[url('https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&q=80&w=2070')] bg-cover bg-center bg-no-repeat">
+        <div className="w-full min-h-screen bg-background/90 backdrop-blur-sm">
           <Projects />
         </div>
       </section>
 
-      <section id="experience" className="snap-start min-h-screen bg-[url('https://images.unsplash.com/photo-1484417894907-623942c8ee29?auto=format&fit=crop&q=80&w=2070')] bg-cover bg-center bg-no-repeat">
-        <div className="w-full h-full bg-background/90 backdrop-blur-sm">
+      <section id="experience" className="snap-start min-h-screen overflow-y-auto bg-[url('https://images.unsplash.com/photo-1484417894907-623942c8ee29?auto=format&fit=crop&q=80&w=2070')] bg-cover bg-center bg-no-repeat">
+        <div className="w-full min-h-screen bg-background/90 backdrop-blur-sm">
           <Experience />
         </div>
       </section>
 
-      <section id="contact" className="snap-start min-h-screen bg-[url('https://images.unsplash.com/photo-1516321165247-4aa89a48be28?auto=format&fit=crop&q=80&w=2070')] bg-cover bg-center bg-no-repeat">
-        <div className="w-full h-full bg-background/90 backdrop-blur-sm">
+      <section id="contact" className="snap-start min-h-screen overflow-y-auto bg-[url('https://images.unsplash.com/photo-1516321165247-4aa89a48be28?auto=format&fit=crop&q=80&w=2070')] bg-cover bg-center bg-no-repeat">
+        <div className="w-full min-h-screen bg-background/90 backdrop-blur-sm">
           <Contact />
         </div>
       </section>

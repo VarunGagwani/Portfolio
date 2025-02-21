@@ -5,10 +5,13 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { MoonIcon, SunIcon, Menu, X } from "lucide-react"
 import { useTheme } from "next-themes"
+import { useRouter, usePathname } from "next/navigation"
+import Link from "next/link"
 
 const navigation = [
   { name: "Home", href: "home" },
   { name: "About", href: "about" },
+  { name: "Blog", href: "blog" },
   { name: "Projects", href: "projects" },
   { name: "Experience", href: "experience" },
   { name: "Contact", href: "contact" },
@@ -18,9 +21,13 @@ export function Navigation() {
   const { theme, setTheme } = useTheme()
   const [activeSection, setActiveSection] = React.useState("home")
   const [isMenuOpen, setIsMenuOpen] = React.useState(false)
+  const router = useRouter()
+  const pathname = usePathname()
 
   React.useEffect(() => {
     const handleScroll = () => {
+      if (pathname !== "/") return
+
       const sections = document.querySelectorAll("section")
       const scrollPosition = window.scrollY + window.innerHeight / 2
 
@@ -36,27 +43,21 @@ export function Navigation() {
 
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+  }, [pathname])
 
-  const scrollToSection = (sectionId: string) => {
-    const container = document.querySelector('.snap-y')
-    if (!container) return
-
-    const section = document.getElementById(sectionId)
-    if (!section) return
-
-    setActiveSection(sectionId)
+  const handleNavigation = (sectionId: string) => {
     setIsMenuOpen(false)
     
-    if (sectionId === "home") {
-      container.scrollTo({
-        top: 0,
-        behavior: "smooth"
-      })
+    if (pathname.startsWith("/blog/")) {
+      router.push(`/#${sectionId}`)
+    } else if (pathname !== "/") {
+      router.push(`/#${sectionId}`)
     } else {
-      section.scrollIntoView({
-        behavior: "smooth"
-      })
+      const section = document.getElementById(sectionId)
+      if (section) {
+        section.scrollIntoView({ behavior: "smooth" })
+        setActiveSection(sectionId)
+      }
     }
   }
 
@@ -82,7 +83,7 @@ export function Navigation() {
           {navigation.map((item) => (
             <button
               key={item.href}
-              onClick={() => scrollToSection(item.href)}
+              onClick={() => handleNavigation(item.href)}
               className={cn(
                 "transition-colors hover:text-foreground/80 relative",
                 activeSection === item.href
@@ -102,7 +103,7 @@ export function Navigation() {
               {navigation.map((item) => (
                 <button
                   key={item.href}
-                  onClick={() => scrollToSection(item.href)}
+                  onClick={() => handleNavigation(item.href)}
                   className={cn(
                     "block w-full text-left px-4 py-2 text-sm font-medium transition-colors hover:bg-accent",
                     activeSection === item.href
