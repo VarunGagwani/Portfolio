@@ -22,79 +22,87 @@ export default function Home() {
     if (!container) return
 
     let startY = 0
+    let startTime = 0
     let lastScrollTime = 0
     const scrollCooldown = 1000 // 1 second cooldown between section changes
     const sections = container.getElementsByTagName('section')
     const totalSections = sections.length
+    const minSwipeDistance = 100 // Minimum distance for swipe to trigger section change
+    const maxSwipeTime = 300 // Maximum time in ms for swipe to be considered intentional
 
-    const isAtSectionBottom = (section: Element) => {
+    const isAtSectionEdge = (section: Element, direction: number) => {
       const sectionRect = section.getBoundingClientRect()
       const viewportHeight = window.innerHeight
-      return sectionRect.bottom <= viewportHeight + 5 // Small buffer for rounding errors
-    }
+      const buffer = 50 // Increased buffer zone
 
-    const isAtSectionTop = (section: Element) => {
-      const sectionRect = section.getBoundingClientRect()
-      return sectionRect.top >= -5 // Small buffer for rounding errors
-    }
-
-    const handleWheel = (e: WheelEvent) => {
-      const now = Date.now()
-      if (now - lastScrollTime < scrollCooldown) return
-
-      const currentSection = sections[currentSectionIndex]
-      const direction = e.deltaY > 0 ? 1 : -1
-      const nextIndex = currentSectionIndex + direction
-
-      // Only prevent default if we're going to change sections
-      if (nextIndex >= 0 && nextIndex < totalSections) {
-        if (
-          (direction > 0 && isAtSectionBottom(currentSection)) ||
-          (direction < 0 && isAtSectionTop(currentSection))
-        ) {
-          e.preventDefault()
-          setIsScrolling(true)
-          setCurrentSectionIndex(nextIndex)
-          sections[nextIndex].scrollIntoView({ behavior: 'smooth' })
-          lastScrollTime = now
-          setTimeout(() => {
-            setIsScrolling(false)
-          }, scrollCooldown)
-        }
+      if (direction > 0) {
+        // Scrolling down
+        return sectionRect.bottom <= viewportHeight + buffer
+      } else {
+        // Scrolling up
+        return sectionRect.top >= -buffer
       }
     }
 
-    const handleTouchStart = (e: TouchEvent) => {
-      startY = e.touches[0].clientY
-    }
-
-    const handleTouchMove = (e: TouchEvent) => {
+    const handleWheel = (e: WheelEvent) => {
       const now = Date.now()
       if (now - lastScrollTime < scrollCooldown) {
         e.preventDefault()
         return
       }
 
+      const currentSection = sections[currentSectionIndex]
+      const direction = e.deltaY > 0 ? 1 : -1
+      const nextIndex = currentSectionIndex + direction
+
+      // Accumulate scroll distance to prevent accidental triggers
+      if (Math.abs(e.deltaY) < 50) return
+
+      if (nextIndex >= 0 && nextIndex < totalSections && isAtSectionEdge(currentSection, direction)) {
+        e.preventDefault()
+        setIsScrolling(true)
+        setCurrentSectionIndex(nextIndex)
+        sections[nextIndex].scrollIntoView({ behavior: 'smooth' })
+        lastScrollTime = now
+        setTimeout(() => {
+          setIsScrolling(false)
+        }, scrollCooldown)
+      }
+    }
+
+    const handleTouchStart = (e: TouchEvent) => {
+      startY = e.touches[0].clientY
+      startTime = Date.now()
+    }
+
+    const handleTouchMove = (e: TouchEvent) => {
+      const now = Date.now()
+      if (now - lastScrollTime < scrollCooldown) {
+        return
+      }
+
       const currentY = e.touches[0].clientY
       const deltaY = startY - currentY
+      const swipeTime = now - startTime
+      
+      // Only process if it's a deliberate swipe gesture
+      if (swipeTime > maxSwipeTime || Math.abs(deltaY) < minSwipeDistance) {
+        return
+      }
+
       const direction = deltaY > 0 ? 1 : -1
       const nextIndex = currentSectionIndex + direction
       const currentSection = sections[currentSectionIndex]
 
-      if (Math.abs(deltaY) > 50 && nextIndex >= 0 && nextIndex < totalSections) {
-        if (
-          (direction > 0 && isAtSectionBottom(currentSection)) ||
-          (direction < 0 && isAtSectionTop(currentSection))
-        ) {
-          e.preventDefault()
-          setIsScrolling(true)
-          setCurrentSectionIndex(nextIndex)
-          sections[nextIndex].scrollIntoView({ behavior: 'smooth' })
-          lastScrollTime = now
-          setTimeout(() => {
-            setIsScrolling(false)
-          }, scrollCooldown)
-        }
+      if (nextIndex >= 0 && nextIndex < totalSections && isAtSectionEdge(currentSection, direction)) {
+        e.preventDefault()
+        setIsScrolling(true)
+        setCurrentSectionIndex(nextIndex)
+        sections[nextIndex].scrollIntoView({ behavior: 'smooth' })
+        lastScrollTime = now
+        setTimeout(() => {
+          setIsScrolling(false)
+        }, scrollCooldown)
       }
     }
 
