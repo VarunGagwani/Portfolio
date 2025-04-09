@@ -184,31 +184,31 @@ export default function Home() {
       </section>
 
       <section id="about" className="snap-start min-h-screen overflow-y-auto bg-[url('https://images.unsplash.com/photo-1517134191118-9d595e4c8c2b?auto=format&fit=crop&q=80&w=2070')] bg-cover bg-center bg-no-repeat">
-        <div className="w-full min-h-screen bg-background/90 backdrop-blur-sm">
+        <div className="w-full min-h-screen bg-background/90 backdrop-blur-sm pt-16">
           <About />
         </div>
       </section>
 
       <section id="blog" className="snap-start min-h-screen overflow-y-auto bg-[url('https://images.unsplash.com/photo-1456324504439-367cee3b3c32?auto=format&fit=crop&q=80&w=2070')] bg-cover bg-center bg-no-repeat">
-        <div className="w-full min-h-screen bg-background/90 backdrop-blur-sm">
+        <div className="w-full min-h-screen bg-background/90 backdrop-blur-sm pt-16">
           <Blog />
         </div>
       </section>
 
       <section id="projects" className="snap-start min-h-screen overflow-y-auto bg-[url('https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&q=80&w=2070')] bg-cover bg-center bg-no-repeat">
-        <div className="w-full min-h-screen bg-background/90 backdrop-blur-sm">
+        <div className="w-full min-h-screen bg-background/90 backdrop-blur-sm pt-16">
           <Projects />
         </div>
       </section>
 
       <section id="experience" className="snap-start min-h-screen overflow-y-auto bg-[url('https://images.unsplash.com/photo-1484417894907-623942c8ee29?auto=format&fit=crop&q=80&w=2070')] bg-cover bg-center bg-no-repeat">
-        <div className="w-full min-h-screen bg-background/90 backdrop-blur-sm">
+        <div className="w-full min-h-screen bg-background/90 backdrop-blur-sm pt-16">
           <Experience />
         </div>
       </section>
 
       <section id="contact" className="snap-start min-h-screen overflow-y-auto bg-[url('https://images.unsplash.com/photo-1516321165247-4aa89a48be28?auto=format&fit=crop&q=80&w=2070')] bg-cover bg-center bg-no-repeat">
-        <div className="w-full min-h-screen bg-background/90 backdrop-blur-sm">
+        <div className="w-full min-h-screen bg-background/90 backdrop-blur-sm pt-16">
           <Contact />
         </div>
       </section>
