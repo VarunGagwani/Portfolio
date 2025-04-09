@@ -24,23 +24,25 @@ export default function Home() {
     let startY = 0
     let startTime = 0
     let lastScrollTime = 0
+    let touchStartY = 0
+    let isTouchScrolling = false
     const scrollCooldown = 1000 // 1 second cooldown between section changes
     const sections = container.getElementsByTagName('section')
     const totalSections = sections.length
-    const minSwipeDistance = 100 // Minimum distance for swipe to trigger section change
-    const maxSwipeTime = 300 // Maximum time in ms for swipe to be considered intentional
+    const minSwipeDistance = 150 // Increased minimum distance for swipe to trigger section change
+    const maxSwipeTime = 500 // Increased maximum time for swipe to be considered intentional
+    const edgeThreshold = 100 // Distance from edge to trigger section change
 
     const isAtSectionEdge = (section: Element, direction: number) => {
       const sectionRect = section.getBoundingClientRect()
       const viewportHeight = window.innerHeight
-      const buffer = 50 // Increased buffer zone
 
       if (direction > 0) {
-        // Scrolling down
-        return sectionRect.bottom <= viewportHeight + buffer
+        // Scrolling down - check if we're near the bottom
+        return sectionRect.bottom <= viewportHeight + edgeThreshold
       } else {
-        // Scrolling up
-        return sectionRect.top >= -buffer
+        // Scrolling up - check if we're near the top
+        return sectionRect.top >= -edgeThreshold
       }
     }
 
@@ -55,9 +57,7 @@ export default function Home() {
       const direction = e.deltaY > 0 ? 1 : -1
       const nextIndex = currentSectionIndex + direction
 
-      // Accumulate scroll distance to prevent accidental triggers
-      if (Math.abs(e.deltaY) < 50) return
-
+      // Only prevent default if we're going to change sections
       if (nextIndex >= 0 && nextIndex < totalSections && isAtSectionEdge(currentSection, direction)) {
         e.preventDefault()
         setIsScrolling(true)
@@ -71,18 +71,25 @@ export default function Home() {
     }
 
     const handleTouchStart = (e: TouchEvent) => {
-      startY = e.touches[0].clientY
+      if (isTouchScrolling) return
+      touchStartY = e.touches[0].clientY
       startTime = Date.now()
     }
 
     const handleTouchMove = (e: TouchEvent) => {
+      if (isTouchScrolling) {
+        e.preventDefault()
+        return
+      }
+
       const now = Date.now()
       if (now - lastScrollTime < scrollCooldown) {
+        e.preventDefault()
         return
       }
 
       const currentY = e.touches[0].clientY
-      const deltaY = startY - currentY
+      const deltaY = touchStartY - currentY
       const swipeTime = now - startTime
       
       // Only process if it's a deliberate swipe gesture
@@ -96,24 +103,32 @@ export default function Home() {
 
       if (nextIndex >= 0 && nextIndex < totalSections && isAtSectionEdge(currentSection, direction)) {
         e.preventDefault()
+        isTouchScrolling = true
         setIsScrolling(true)
         setCurrentSectionIndex(nextIndex)
         sections[nextIndex].scrollIntoView({ behavior: 'smooth' })
         lastScrollTime = now
         setTimeout(() => {
+          isTouchScrolling = false
           setIsScrolling(false)
         }, scrollCooldown)
       }
     }
 
+    const handleTouchEnd = () => {
+      isTouchScrolling = false
+    }
+
     container.addEventListener('wheel', handleWheel, { passive: false })
     container.addEventListener('touchstart', handleTouchStart, { passive: true })
     container.addEventListener('touchmove', handleTouchMove, { passive: false })
+    container.addEventListener('touchend', handleTouchEnd, { passive: true })
 
     return () => {
       container.removeEventListener('wheel', handleWheel)
       container.removeEventListener('touchstart', handleTouchStart)
       container.removeEventListener('touchmove', handleTouchMove)
+      container.removeEventListener('touchend', handleTouchEnd)
     }
   }, [isScrolling, currentSectionIndex])
 
