@@ -26,12 +26,18 @@ export default function Home() {
     let lastScrollTime = 0
     let touchStartY = 0
     let isTouchScrolling = false
+    let lastDirection = 0
+    let scrollVelocity = 0
+    let lastScrollY = 0
+    let lastScrollTimestamp = 0
+
     const scrollCooldown = 1000 // 1 second cooldown between section changes
     const sections = container.getElementsByTagName('section')
     const totalSections = sections.length
-    const minSwipeDistance = 150 // Increased minimum distance for swipe to trigger section change
-    const maxSwipeTime = 500 // Increased maximum time for swipe to be considered intentional
-    const edgeThreshold = 100 // Distance from edge to trigger section change
+    const minSwipeDistance = 200 // Increased minimum distance for swipe to trigger section change
+    const maxSwipeTime = 800 // Increased maximum time for swipe to be considered intentional
+    const edgeThreshold = 150 // Increased distance from edge to trigger section change
+    const maxVelocity = 0.5 // Maximum allowed scroll velocity (pixels per millisecond)
 
     const isAtSectionEdge = (section: Element, direction: number) => {
       const sectionRect = section.getBoundingClientRect()
@@ -44,6 +50,12 @@ export default function Home() {
         // Scrolling up - check if we're near the top
         return sectionRect.top >= -edgeThreshold
       }
+    }
+
+    const calculateScrollVelocity = (currentY: number, timestamp: number) => {
+      const deltaY = Math.abs(currentY - lastScrollY)
+      const deltaTime = timestamp - lastScrollTimestamp
+      return deltaTime > 0 ? deltaY / deltaTime : 0
     }
 
     const handleWheel = (e: WheelEvent) => {
@@ -74,6 +86,10 @@ export default function Home() {
       if (isTouchScrolling) return
       touchStartY = e.touches[0].clientY
       startTime = Date.now()
+      lastScrollY = touchStartY
+      lastScrollTimestamp = startTime
+      scrollVelocity = 0
+      lastDirection = 0
     }
 
     const handleTouchMove = (e: TouchEvent) => {
@@ -92,12 +108,26 @@ export default function Home() {
       const deltaY = touchStartY - currentY
       const swipeTime = now - startTime
       
-      // Only process if it's a deliberate swipe gesture
-      if (swipeTime > maxSwipeTime || Math.abs(deltaY) < minSwipeDistance) {
+      // Calculate current scroll velocity
+      scrollVelocity = calculateScrollVelocity(currentY, now)
+      lastScrollY = currentY
+      lastScrollTimestamp = now
+
+      // Only process if it's a deliberate swipe gesture and velocity is within limits
+      if (swipeTime > maxSwipeTime || 
+          Math.abs(deltaY) < minSwipeDistance || 
+          scrollVelocity > maxVelocity) {
         return
       }
 
       const direction = deltaY > 0 ? 1 : -1
+      
+      // Prevent rapid direction changes
+      if (lastDirection !== 0 && lastDirection !== direction) {
+        return
+      }
+      lastDirection = direction
+
       const nextIndex = currentSectionIndex + direction
       const currentSection = sections[currentSectionIndex]
 
@@ -111,12 +141,15 @@ export default function Home() {
         setTimeout(() => {
           isTouchScrolling = false
           setIsScrolling(false)
+          lastDirection = 0
         }, scrollCooldown)
       }
     }
 
     const handleTouchEnd = () => {
       isTouchScrolling = false
+      lastDirection = 0
+      scrollVelocity = 0
     }
 
     container.addEventListener('wheel', handleWheel, { passive: false })
