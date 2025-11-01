@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion"
 import { Card, CardContent } from "@/components/ui/card"
+import { Container } from "@/components/ui/container"
 import { 
   // Programming Languages
   FileCode2, Code2, Braces, Hash, Coffee,
@@ -16,7 +17,7 @@ import {
   // Infrastructure
   Network, Cpu, HardDrive, Settings,
   // Soft Skills
-  Users, MessageSquare, Brain, Target
+  Users, Brain, Target, Mic
 } from "lucide-react"
 
 const skills = [
@@ -79,9 +80,9 @@ const skills = [
     category: "Soft Skills",
     items: [
       { name: "Leadership", icon: Users, link: "https://www.pmi.org/certifications/project-management-pmp" },
-      { name: "Communication", icon: MessageSquare, link: "https://www.toastmasters.org/" },
       { name: "Problem Solving", icon: Brain, link: "https://www.coursera.org/learn/problem-solving" },
-      { name: "Project Management", icon: Target, link: "https://www.scrum.org/" }
+      { name: "Project Management", icon: Target, link: "https://www.scrum.org/" },
+      { name: "Public Speaking", icon: Mic, link: "https://www.toastmasters.org/" }
     ]
   }
 ]
@@ -103,36 +104,37 @@ const itemVariants = {
 
 export default function About() {
   return (
-    <div className="container py-12">
+    <Container size="xl" padding="lg" className="py-12 lg:py-16">
       <motion.div
         initial="hidden"
         animate="show"
         variants={containerVariants}
+        className="spacing-lg"
       >
         <motion.h1 
-          className="text-4xl font-bold mb-8"
+          className="text-responsive-2xl font-bold"
           variants={itemVariants}
         >
           About Varun Gagwani
         </motion.h1>
         <motion.div 
-          className="prose dark:prose-invert max-w-none mb-12"
+          className="prose dark:prose-invert max-w-none"
           variants={itemVariants}
         >
-          <p className="text-lg text-muted-foreground">
+          <p className="text-responsive-lg text-muted-foreground leading-relaxed">
             A passionate technologist with expertise in cybersecurity, data science, and full-stack development. 
             He specializes in building secure, data-driven solutions that solve complex business problems.
           </p>
         </motion.div>
 
         <motion.h2 
-          className="text-2xl font-semibold mb-6"
+          className="text-responsive-xl font-semibold"
           variants={itemVariants}
         >
           Skills & Expertise
         </motion.h2>
         <motion.div 
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6"
           variants={containerVariants}
         >
           {skills.map((category) => (
@@ -142,7 +144,7 @@ export default function About() {
               whileHover={{ scale: 1.02 }}
               transition={{ type: "spring", stiffness: 300 }}
             >
-              <Card>
+              <Card className="card-hover h-full">
                 <CardContent className="pt-6">
                   <h3 className="text-xl font-semibold mb-4">{category.category}</h3>
                   <div className="grid grid-cols-2 gap-4">
@@ -154,7 +156,7 @@ export default function About() {
                           href={item.link}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+                          className="flex items-center gap-2 text-muted-foreground link-hover interactive-focus rounded-md p-1 -m-1"
                         >
                           <Icon className="h-5 w-5 text-primary" />
                           <span className="text-sm">{item.name}</span>
@@ -168,6 +170,6 @@ export default function About() {
           ))}
         </motion.div>
       </motion.div>
-    </div>
+    </Container>
   )
 }

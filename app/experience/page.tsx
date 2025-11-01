@@ -2,12 +2,13 @@
 
 import { motion } from "framer-motion"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { Container } from "@/components/ui/container"
 import { Badge } from "@/components/ui/badge"
 
 const experiences = [
   {
     company: "Preferential InfoSec Consulting Inc.",
-    duration: "2020 - Present",
+    duration: "2022 - Present",
     highlights: [
       "Led comprehensive threat risk assessments for critical infrastructure systems, improving security posture by 40%",
       "Developed and implemented automated security monitoring solutions using Python and AWS",
@@ -31,13 +32,14 @@ const experiences = [
 
 export default function Experience() {
   return (
-    <div className="container py-12">
+    <Container size="xl" padding="lg" className="py-12 lg:py-16">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
+        className="spacing-lg"
       >
-        <h1 className="text-4xl font-bold mb-8">Experience</h1>
+        <h1 className="text-responsive-2xl font-bold">Experience</h1>
         <div className="space-y-6">
           {experiences.map((experience, index) => (
             <motion.div
@@ -46,11 +48,11 @@ export default function Experience() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
             >
-              <Card>
+              <Card className="card-hover">
                 <CardHeader>
                   <div className="flex justify-between items-start">
                     <div>
-                      <h3 className="text-xl font-semibold">{experience.company}</h3>
+                      <h3 className="text-responsive-xl font-semibold">{experience.company}</h3>
                       <p className="text-muted-foreground">{experience.duration}</p>
                     </div>
                   </div>
@@ -76,6 +78,6 @@ export default function Experience() {
           ))}
         </div>
       </motion.div>
-    </div>
+    </Container>
   )
 }

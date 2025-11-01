@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Container } from "@/components/ui/container"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
@@ -63,16 +64,17 @@ export default function Contact() {
   }
 
   return (
-    <div className="container py-12">
+    <Container size="xl" padding="lg" className="py-12 lg:py-16">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
+        className="spacing-lg"
       >
-        <h1 className="text-4xl font-bold mb-8">Contact</h1>
+        <h1 className="text-responsive-2xl font-bold">Contact</h1>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <Card>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+          <Card className="card-hover">
             <CardHeader>
               <CardTitle>Get in Touch</CardTitle>
             </CardHeader>
@@ -110,7 +112,7 @@ export default function Contact() {
                     required
                   />
                 </div>
-                <Button type="submit" className="w-full" disabled={isSubmitting}>
+                <Button type="submit" className="w-full min-h-[44px] btn-enhanced" disabled={isSubmitting}>
                   {isSubmitting ? "Sending..." : "Send Message"}
                 </Button>
               </form>
@@ -118,7 +120,7 @@ export default function Contact() {
           </Card>
 
           <div className="space-y-6">
-            <Card>
+            <Card className="card-hover">
               <CardHeader>
                 <CardTitle>Connect</CardTitle>
               </CardHeader>
@@ -127,7 +129,7 @@ export default function Contact() {
                   href="https://github.com/VarunGagwani"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center space-x-2 text-muted-foreground hover:text-foreground transition-colors"
+                  className="flex items-center space-x-2 text-muted-foreground link-hover interactive-focus rounded-md p-2 -m-2 min-h-[44px]"
                 >
                   <Github className="h-5 w-5" />
                   <span>GitHub</span>
@@ -136,21 +138,21 @@ export default function Contact() {
                   href="https://www.linkedin.com/in/varun-gagwani"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center space-x-2 text-muted-foreground hover:text-foreground transition-colors"
+                  className="flex items-center space-x-2 text-muted-foreground link-hover interactive-focus rounded-md p-2 -m-2 min-h-[44px]"
                 >
                   <Linkedin className="h-5 w-5" />
                   <span>LinkedIn</span>
                 </a>
                 <a
                   href="mailto:varuncgagwani@gmail.com"
-                  className="flex items-center space-x-2 text-muted-foreground hover:text-foreground transition-colors"
+                  className="flex items-center space-x-2 text-muted-foreground link-hover interactive-focus rounded-md p-2 -m-2 min-h-[44px]"
                 >
                   <Mail className="h-5 w-5" />
                   <span>varuncgagwani@gmail.com</span>
                 </a>
                 <a
                   href="tel:416-809-1339"
-                  className="flex items-center space-x-2 text-muted-foreground hover:text-foreground transition-colors"
+                  className="flex items-center space-x-2 text-muted-foreground link-hover interactive-focus rounded-md p-2 -m-2 min-h-[44px]"
                 >
                   <Phone className="h-5 w-5" />
                   <span>416-809-1339</span>
@@ -160,6 +162,6 @@ export default function Contact() {
           </div>
         </div>
       </motion.div>
-    </div>
+    </Container>
   )
 }

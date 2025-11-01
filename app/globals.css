@@ -79,4 +79,129 @@
   body {
     @apply bg-background text-foreground;
   }
+  
+  /* Smooth scrolling for the entire document */
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  /* Improved focus indicators */
+  *:focus-visible {
+    @apply outline-2 outline-offset-2 outline-ring;
+  }
+  
+  /* Improved touch scrolling */
+  * {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+  
+  /* Prevent horizontal scrolling */
+  body {
+    overflow-x: hidden;
+  }
+}
+
+@layer utilities {
+  /* Responsive spacing utilities */
+  .spacing-xs { @apply space-y-2; }
+  .spacing-sm { @apply space-y-4; }
+  .spacing-md { @apply space-y-6; }
+  .spacing-lg { @apply space-y-8; }
+  .spacing-xl { @apply space-y-12; }
+  
+  /* Responsive padding utilities */
+  .padding-responsive {
+    @apply px-4 sm:px-6 lg:px-8;
+  }
+  
+  .padding-responsive-lg {
+    @apply px-6 sm:px-8 lg:px-12;
+  }
+  
+  /* Container utilities */
+  .container-responsive {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+  
+  /* Typography responsive utilities */
+  .text-responsive-sm {
+    @apply text-sm sm:text-base;
+  }
+  
+  .text-responsive-base {
+    @apply text-base sm:text-lg;
+  }
+  
+  .text-responsive-lg {
+    @apply text-lg sm:text-xl lg:text-2xl;
+  }
+  
+  .text-responsive-xl {
+    @apply text-xl sm:text-2xl lg:text-3xl;
+  }
+  
+  .text-responsive-2xl {
+    @apply text-2xl sm:text-3xl lg:text-4xl;
+  }
+  
+  /* Interactive element utilities */
+  .interactive-hover {
+    @apply transition-all duration-300 hover:scale-105 hover:shadow-md;
+    will-change: transform, box-shadow;
+  }
+  
+  .interactive-focus {
+    @apply focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+  }
+  
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-lg;
+    will-change: transform, box-shadow;
+  }
+  
+  .card-hover:hover {
+    transform: translateY(-4px);
+  }
+  
+  .link-hover {
+    @apply transition-colors duration-300 hover:text-primary;
+  }
+  
+  /* Enhanced button states */
+  .btn-enhanced {
+    @apply transition-all duration-300 hover:shadow-md;
+    will-change: transform, box-shadow;
+  }
+  
+  .btn-enhanced:hover {
+    transform: translateY(-1px);
+  }
+  
+  .btn-enhanced:active {
+    transform: translateY(0) scale(0.98);
+  }
+  
+  /* Smooth page transitions */
+  .page-transition {
+    @apply transition-opacity duration-500 ease-in-out;
+  }
+  
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+    
+    html {
+      scroll-behavior: auto;
+    }
+    
+    .interactive-hover,
+    .card-hover {
+      transform: none !important;
+    }
+  }
 }

@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Container } from "@/components/ui/container"
 import { Badge } from "@/components/ui/badge"
 import { CalendarDays } from "lucide-react"
 import Link from "next/link"
@@ -20,13 +21,14 @@ const blogs = [
 
 export default function Blog() {
   return (
-    <div className="container py-12">
+    <Container size="xl" padding="lg" className="py-12 lg:py-16">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
+        className="spacing-lg"
       >
-        <h1 className="text-4xl font-bold mb-8">Blog</h1>
+        <h1 className="text-responsive-2xl font-bold">Blog</h1>
         <div className="grid gap-6">
           {blogs.map((blog) => (
             <motion.div
@@ -35,7 +37,7 @@ export default function Blog() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <Card>
+              <Card className="card-hover">
                 <CardHeader>
                   <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                     <CalendarDays className="h-4 w-4" />
@@ -43,8 +45,8 @@ export default function Blog() {
                     <span>•</span>
                     <span>{blog.readTime}</span>
                   </div>
-                  <CardTitle className="text-2xl hover:text-primary transition-colors">
-                    <Link href={`/blog/${blog.slug}`}>
+                  <CardTitle className="text-responsive-xl">
+                    <Link href={`/blog/${blog.slug}`} className="link-hover interactive-focus rounded-md">
                       {blog.title}
                     </Link>
                   </CardTitle>
@@ -62,6 +64,6 @@ export default function Blog() {
           ))}
         </div>
       </motion.div>
-    </div>
+    </Container>
   )
 }
